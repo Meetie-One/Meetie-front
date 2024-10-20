@@ -39,6 +39,8 @@ const ImageUploader = ({ images, updateInputValue }: ImageUploaderProps) => {
         />
       </label>
 
+      {images}
+
       {images.map((image, index) => (
         <ImageCard
           key={`upload_image_${index}`}

@@ -19,7 +19,6 @@ export async function POST(request: Request) {
       { status: 400, statusText: "post community error" },
     );
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ message: "error" }, { status: 500 });
+    return NextResponse.json({ message: "error", error }, { status: 500 });
   }
 }
