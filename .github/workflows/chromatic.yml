@@ -4,6 +4,10 @@ on:
   pull_request:
     branches:
       - develop
+    paths:
+      - "**.stories.ts"
+      - "**.stories.tsx"
+      - "**.mdx"
 
 jobs:
   chromatic-deployment:
