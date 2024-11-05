@@ -30,7 +30,7 @@ jobs:
           token: ${{ secrets.TOKEN }}
 
       - name: comment PR
-        uses: thollander/actions-comment-pull-request@v1
+        uses: thollander/actions-comment-pull-request@v3
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
