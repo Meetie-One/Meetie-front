@@ -29,6 +29,8 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
   ({ className, src, outline = "default", size = "default", ...props }, ref) => {
     const newSize = size === "sm" ? 36 : size === "lg" ? 100 : size === "md" ? 50 : 60;
 
+    console.log("abc");
+
     const classes = cn(
       avatarStyles.base,
       avatarStyles.outline[outline],
