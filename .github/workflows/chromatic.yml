@@ -21,9 +21,16 @@ jobs:
           autoAcceptChanges: true
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
 
-      - name: Save PR number and Chromatic build outputs
-        run: |
-          mkdir -p ./pr
-          echo "${{ github.event.pull_request.number }}" > ./pr/prNumber
-          echo "${{ steps.chromatic.outputs.storybookUrl }}" > ./pr/storybookUrl
-          echo "${{ steps.chromatic.outputs.buildUrl }}" > ./pr/buildUrl
+      - name: comment PR
+        uses: thollander/actions-comment-pull-request@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          message: "🚀storybook: ${{ steps.chromatic.outputs.storybookUrl }}"
+
+      # - name: Save PR number and Chromatic build outputs
+      #   run: |
+      #     mkdir -p ./pr
+      #     echo "${{ github.event.pull_request.number }}" > ./pr/prNumber
+      #     echo "${{ steps.chromatic.outputs.storybookUrl }}" > ./pr/storybookUrl
+      #     echo "${{ steps.chromatic.outputs.buildUrl }}" > ./pr/buildUrl
