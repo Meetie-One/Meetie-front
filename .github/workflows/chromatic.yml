@@ -19,19 +19,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: 캐시 종속성
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: "**/node_modules"
-          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}-storybook
+      # - name: 캐시 종속성
+      #   id: cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: "**/node_modules"
+      #     key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}-storybook
 
-      - name: 종속성 설치
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn install
+      # - name: 종속성 설치
+      #   if: steps.cache.outputs.cache-hit != 'true'
+      #   run: yarn install
 
-      # - name: Install dependencies
-      #   run: yarn
+      - name: Install dependencies
+        run: yarn
 
       - name: Publish to Chromatic
         id: chromatic
