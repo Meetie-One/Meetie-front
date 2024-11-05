@@ -21,14 +21,9 @@ jobs:
           autoAcceptChanges: true
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
 
-  github-bot-storybook:
-    runs-on: ubuntu-latest
-    needs: [chromatic-deployment]
-    steps:
-      - name: Create comment PR
-        uses: thollander/actions-comment-pull-request@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
-        with:
-          comment_tag: ${{github.event.number}}-storybook
-          message: "storybook: ${{steps.chromatic.outputs.storybookUrl }}"
+      - name: Save PR number and Chromatic build outputs
+        run: |
+          mkdir -p ./pr
+          echo "${{ github.event.pull_request.number }}" > ./pr/prNumber
+          echo "${{ steps.chromatic.outputs.storybookUrl }}" > ./pr/storybookUrl
+          echo "${{ steps.chromatic.outputs.buildUrl }}" > ./pr/buildUrl
