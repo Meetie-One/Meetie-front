@@ -62,6 +62,7 @@ jobs:
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.TOKEN }}
       #   with:
+      #     comment-tag: ${{ github.event.number }}-storybook
       #     message: "storybook: ${{ steps.chromatic.outputs.storybookUrl }}"
 
     outputs:
@@ -81,5 +82,5 @@ jobs:
           comment-tag: ${{ github.event.number }}-storybook
           message: |
 
-            💄 Storybook: ${{ needs.storybook-preview.outputs.storybook_url }}
-            🕖 Update: ${{ needs.storybook-preview.outputs.currnent_time }}
+            💄 Storybook: ${{ needs.chromatic-deployment.outputs.storybook_url }}
+            🕖 Update: ${{ needs.chromatic-deployment.outputs.currnent_time }}
