@@ -27,6 +27,8 @@ jobs:
     steps:
       - name: Create comment PR
         uses: thollander/actions-comment-pull-request@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
           comment_tag: ${{github.event.number}}-storybook
           message: "storybook: ${{steps.chromatic.outputs.storybookUrl }}"
