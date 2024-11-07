@@ -1,0 +1,33 @@
+name: "E2E Test"
+
+on:
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  e2e-test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18.17.x"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Install playwright
+        run: yarn playwright install --with-deps
+
+      - name: Run playwright tests
+        run: yarn test:e2e
+        env:
+        PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}

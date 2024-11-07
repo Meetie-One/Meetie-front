@@ -13,14 +13,16 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   timeout: 30 * 1000,
-  webServer: {
-    command: "yarn dev",
-    url: "http://localhost:3000",
-    timeout: 60 * 1000,
-    reuseExistingServer: true,
-    stdout: "ignore",
-    stderr: "pipe",
-  },
+  webServer: process.env.CI
+    ? undefined
+    : {
+        command: "yarn dev",
+        url: "http://localhost:3000",
+        timeout: 60 * 1000,
+        reuseExistingServer: true,
+        stdout: "ignore",
+        stderr: "pipe",
+      },
   projects: [
     {
       name: "chromium",
