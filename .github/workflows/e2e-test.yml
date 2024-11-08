@@ -29,5 +29,5 @@ jobs:
 
       - name: Run playwright tests
         run: yarn test:e2e
-        env:
-        PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
+        # env:
+        # PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
