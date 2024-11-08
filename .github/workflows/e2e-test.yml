@@ -10,6 +10,13 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
+      - name: Waiting for 200 from the Vercel Preview
+        uses: patrickedqvist/wait-for-vercel-preview@v1.2.0
+        id: waitForDeploy
+        with:
+          token: ${{ secrets.TOKEN }}
+          max_timeout: 300
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -29,5 +36,7 @@ jobs:
 
       - name: Run playwright tests
         run: yarn e2e
+        env:
+          BASE_URL: ${{ steps.waitForDeploy.outputs.url }}
         # env:
         # PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
