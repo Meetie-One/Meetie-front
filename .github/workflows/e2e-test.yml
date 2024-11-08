@@ -5,18 +5,18 @@ on:
     branches:
       - develop
 
+#  - name: Waiting for 200 from the Vercel Preview
+#         uses: patrickedqvist/wait-for-vercel-preview@v1.2.0
+#         id: waitForDeploy
+#         with:
+#           token: ${{ secrets.TOKEN }}
+#           max_timeout: 300
+
 jobs:
   e2e-test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      - name: Waiting for 200 from the Vercel Preview
-        uses: patrickedqvist/wait-for-vercel-preview@v1.2.0
-        id: waitForDeploy
-        with:
-          token: ${{ secrets.TOKEN }}
-          max_timeout: 300
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -35,8 +35,8 @@ jobs:
         run: yarn playwright install --with-deps
 
       - name: Run playwright tests
-        run: yarn e2e
-        env:
-          BASE_URL: ${{ steps.waitForDeploy.outputs.url }}
+        run: yarn e2e:ui
+        # env:
+        #   BASE_URL: ${{ steps.waitForDeploy.outputs.url }}
         # env:
         # PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
