@@ -28,6 +28,6 @@ jobs:
         run: yarn playwright install --with-deps
 
       - name: Run playwright tests
-        run: yarn test:e2e
+        run: yarn e2e
         # env:
         # PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
