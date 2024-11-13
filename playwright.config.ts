@@ -3,8 +3,13 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   globalSetup: require.resolve("./src/e2e/global-setup.ts"),
   use: {
-    baseURL: "http://localhost:3000/",
+    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || "http://localhost:3000",
+    trace: "on-first-retry",
     storageState: "playwright/store/auth.json",
+    extraHTTPHeaders: {
+      "x-vercel-protection-bypass": process.env.VERCEL_AUTOMATION_BYPASS_SECRET ?? "",
+      "x-vercel-set-bypass-cookie": "samesitenone",
+    },
   },
   testDir: "./src/e2e",
   fullyParallel: false,
