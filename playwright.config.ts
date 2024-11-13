@@ -7,7 +7,8 @@ export default defineConfig({
     trace: "on-first-retry",
     storageState: "playwright/store/auth.json",
     extraHTTPHeaders: {
-      "x-vercel-protection-bypass": process.env.VERCEL_AUTOMATION_BYPASS_SECRET,
+      "x-vercel-protection-bypass":
+        process.env.VERCEL_AUTOMATION_BYPASS_SECRET ?? "Yt6IIOm2e5vnQzlVGcFOGp2c6X7Iysbf",
       "x-vercel-set-bypass-cookie": "true",
     },
   },
