@@ -6,29 +6,29 @@ on:
       - develop
 
 jobs:
-  e2e-test:
-    timeout-minutes: 60
+  test-setup:
+    name: Test setup
     runs-on: ubuntu-latest
-    environment: playwright
+    outputs:
+      preview_url: ${{ steps.waitForVercelPreviewDeployment.outputs.url }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-          cache: "yarn"
-
       - name: Waiting for 200 from the Vercel Preview
-        uses: patrickedqvist/wait-for-vercel-preview@v1.3.1
-        id: make-preview-url
+        uses: patrickedqvist/wait-for-vercel-preview@v1.2.0
+        id: waitForVercelPreviewDeployment
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           max_timeout: 300
-          check_interval: 10
+  e2e-test:
+    needs: test-setup
+    name: Playwright tests
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "yarn"
 
       - name: Install dependencies
         run: yarn
@@ -38,6 +38,8 @@ jobs:
 
       - name: Run playwright tests
         run: npx playwright test
+        env:
+          PLAYWRIGHT_TEST_BASE_URL: ${{ needs.test-setup.outputs.preview_url }}
         # run: yarn e2e:ui
         # env:
         #   BASE_URL: ${{ steps.waitForDeploy.outputs.url }}
