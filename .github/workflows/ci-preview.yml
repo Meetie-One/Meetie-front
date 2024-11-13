@@ -8,11 +8,8 @@ env:
   NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
   NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 on:
-  push:
-    branches-ignore:
-      - develop
   pull_request:
-    branches-ignore:
+    branches:
       - develop
 
 jobs:
@@ -49,6 +46,7 @@ jobs:
   deploy-vercel:
     runs-on: ubuntu-latest
     outputs:
+      statis: ${{ job.status }}
       preview_url: ${{ steps.vercel_preview_url.outputs.preview_url }}
       currnent_time: ${{ steps.current-time.outputs.formattedTime }}
     needs: build
@@ -104,7 +102,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          comment-tag: ${{ github.event.number }}-vercel
+          comment-tag: ${{ github.event.number }}
           message: |
 
             🧷 vercel: ${{ needs.deploy-vercel.outputs.preview_url }}
