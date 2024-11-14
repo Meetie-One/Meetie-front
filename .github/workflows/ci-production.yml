@@ -1,4 +1,5 @@
 name: Production CI
+
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -7,6 +8,7 @@ env:
   NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
   NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
   NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
 on:
   push:
     branches:
@@ -16,65 +18,76 @@ on:
       - develop
 
 jobs:
-  build:
+  project-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js environment
+      - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: "yarn"
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - name: Set yarn version
+        id: set-version
+        run: |
+          yarn set version 4.1.1
+          echo "YARN_VERSION=$(yarn -v)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v4
-        id: yarn-cache
+      - name: Yarn cache - PnP
+        uses: actions/cache@v4
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          path: |
+            .yarn/cache
+            .pnp.*
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-${{ steps.set-version.outputs.YARN_VERSION }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-
 
       - name: Install dependencies
         run: yarn
 
-      - name: Build
+      - name: Run build
         run: yarn build
 
-  deploy-vercel:
+      - name: Run unit test
+        run: yarn test
+
+  deploy-to-vercel:
     runs-on: ubuntu-latest
-    needs: build
+    needs: project-build
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js environment
+      - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: "yarn"
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - name: Set yarn version
+        id: set-version
+        run: |
+          yarn set version 4.1.1
+          echo "YARN_VERSION=$(yarn -v)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v4
-        id: yarn-cache
+      - name: Yarn cache - PnP
+        uses: actions/cache@v4
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          path: |
+            .yarn/cache
+            .pnp.*
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-${{ steps.set-version.outputs.YARN_VERSION }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-
 
       - name: Install dependencies
         run: yarn
 
-      - name: Deploy to Vercel if needed
+      - name: Deploy to Vercel
         run: |
           npm install --global vercel@latest
           vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
