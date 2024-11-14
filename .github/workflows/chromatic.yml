@@ -1,4 +1,4 @@
-name: "Chromatic Deployment"
+name: Chromatic Deployment
 
 on:
   pull_request:
@@ -16,13 +16,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: "18.17.x"
+          node-version: 18
+          cache: "yarn"
 
       - name: Set yarn version
         id: set-version
