@@ -96,7 +96,7 @@ jobs:
           vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Get vercel preview
-        uses: zentered/vercel-preview-url@v1.1.9
+        uses: zentered/vercel-preview-url@v1.4.0
         id: vercel_preview_url
 
       - name: Get URL
@@ -121,6 +121,6 @@ jobs:
           comment-tag: ${{ github.event.number }}
           message: |
 
-            🧷 Preview: https://${{ needs.deploy-vercel.outputs.preview_url }}
+            🧷 Preview: https://${{ needs.deploy-to-vercel.outputs.preview_url }}
 
-            ⏰ Update: ${{ needs.deploy-vercel.outputs.currnent_time }}
+            ⏰ Update: ${{ needs.deploy-to-vercel.outputs.currnent_time }}
