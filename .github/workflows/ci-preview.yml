@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       statis: ${{ job.status }}
-      preview_url: ${{ steps.vercel_preview_url.outputs.preview_url }}
+      preview_url: ${{ steps.deploy-vercel.outputs.preview_url }}
       currnent_time: ${{ steps.current-time.outputs.formattedTime }}
     needs: project-build
     steps:
@@ -89,18 +89,13 @@ jobs:
         run: yarn
 
       - name: Deploy to Vercel
+        id: deploy-vercel
         run: |
           npm install --global vercel@latest
           vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
           vercel build --token=${{ secrets.VERCEL_TOKEN }}
-          vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Get vercel preview
-        uses: zentered/vercel-preview-url@v1.4.0
-        id: vercel_preview_url
-
-      - name: Get URL
-        run: echo "https://${{ steps.vercel_preview_url.outputs.preview_url }}"
+          vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} > vercel-output.txt
+          echo "preview_url=$(cat vercel-output.txt)" >> $GITHUB_OUTPUT
 
       - name: Get current time
         uses: josStorer/get-current-time@v2
@@ -121,6 +116,6 @@ jobs:
           comment-tag: ${{ github.event.number }}
           message: |
 
-            🧷 Preview: https://${{ needs.deploy-to-vercel.outputs.preview_url }}
+            🧷 Preview: ${{ needs.deploy-to-vercel.outputs.preview_url }}
 
             ⏰ Update: ${{ needs.deploy-to-vercel.outputs.currnent_time }}
