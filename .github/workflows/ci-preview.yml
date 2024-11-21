@@ -52,6 +52,12 @@ jobs:
       - name: Run unit test
         run: yarn test
 
+      # - name: Run e2e test install
+      #   run: yarn playwright install --with-deps
+
+      # - name: Run e2e test
+      #   run: yarn playwright test
+
   deploy-to-vercel:
     runs-on: ubuntu-latest
     outputs:
@@ -103,6 +109,62 @@ jobs:
         with:
           format: "YYYY년 MM월 DD일 HH시 mm분"
           utcOffset: "+09:00"
+
+  e2e-test:
+    runs-on: ubuntu-latest
+    needs: [deploy-to-vercel]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "yarn"
+
+      - name: Set yarn version
+        id: set-version
+        run: |
+          yarn set version 4.1.1
+          echo "YARN_VERSION=$(yarn -v)" >> $GITHUB_OUTPUT
+
+      - name: Yarn cache - PnP
+        uses: actions/cache@v4
+        with:
+          path: |
+            .yarn/cache
+            .pnp.*
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-${{ steps.set-version.outputs.YARN_VERSION }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-
+
+      - name: Install dependencies
+        run: yarn
+
+      # - name: Waiting for 200 from the Vercel Preview
+      #   uses: patrickedqvist/wait-for-vercel-preview@v1.3.1
+      #   id: waitFor200
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     max_timeout: 300
+      #     check_interval: 10
+      # - name: Make environment file
+      #   run: |
+      #     echo "Deployed to: ${{ steps.waitFor200.outputs.url }}"
+      #     touch .env
+      #     echo "${{ secrets.ENV_FILE }}" > .env
+      #     echo TEST_BASE_URL=${{ steps.waitFor200.outputs.url }} >> .env
+      # - name: Install dependencies
+      #   run: npm ci
+
+      - name: Install Playwright Browsers
+        run: yarn playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: yarn playwright test
+        env:
+          PLAYWRIGHT_TEST_BASE_URL: ${{ steps.deploy-to-vercel.outputs.preview_url }}
 
   github-privew-comment:
     runs-on: ubuntu-latest
