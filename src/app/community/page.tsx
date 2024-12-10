@@ -21,10 +21,9 @@ export default function CommunityPostListPage() {
       <Suspense fallback={<CommunityBodySkeleton />}>
         <ServerFetchBoundary fetchOptions={serverFetchOptions}>
           <CommunityBody />
+          <CreatePostButton />
         </ServerFetchBoundary>
       </Suspense>
-
-      <CreatePostButton />
 
       <Gnb />
     </>
